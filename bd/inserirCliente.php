@@ -34,8 +34,6 @@ function inserir($arrayCliente)
             )
      ";
 
-    echo ($sql);
-    // die;
     //Chamando a função que estabalece a conexão com o Bando de Dados.
      $conexao = conexaoMySql();
 

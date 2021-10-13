@@ -13,6 +13,9 @@ require_once("../functions/config.php");
 //Import de arquivo para inserir no Banco de Dados.
 require_once(SRC.'bd/inserirCliente.php');
 
+//Import de arquivo para atualizar no Banco de Dados.
+require_once(SRC.'bd/atualizarCliente.php');
+
 //Declaração de variáveis
 $nome = (string) null;
 $rg = (string) null;
@@ -21,6 +24,16 @@ $telefone = (string) null;
 $celular = (string) null;
 $email = (string) null;
 $obs = (string) null;
+
+//Validação para saber o id do registro está chegando
+//pela URL (modo para "Atualizar" um registro)
+if(isset($_GET["id"]))
+    $id = (int) $_GET['id'];
+else
+//Será utilizado somente para o editar
+    $id = 0;
+
+
 
 //$_SERVER['REQUEST_METHOD'] = Verifica o tipo de requisição encaminhada pelo form(GET / POST)
 if($_SERVER['REQUEST_METHOD'] == 'POST')
@@ -65,21 +78,40 @@ if($_SERVER['REQUEST_METHOD'] == 'POST')
             "telefone"  => $telefone,
             "celular"   => $celular,
             "email"     => $email,
-            "obs"       => $obs
+            "obs"       => $obs,
+            "id"        => $id
         );
 
-        //Chama a função inserir do arquivo inserirCliente.php, encaminha o array com os dados do Cliente.
-        if(inserir($cliente))
-            echo("<script> 
-            alert('". BD_MSG_INSERIR ."');
-            window.location.href = '../index.php';
-            </script>");
-        else
-            echo("<script> 
-            alert('". BD_MSG_ERRO ."');
-            window.history.back();
-            </script>");
+        //Validação para saber se é para inserir um novo registro
+        //ou se é para atualizar um registro existente no Banco deDados
+        if(strtoupper($_GET['modo']) == "SALVAR")
+        {
+            //Chama a função inserir do arquivo inserirCliente.php, encaminha o array com os dados do Cliente.
+            if(inserir($cliente))
+                echo("<script> 
+                alert('". BD_MSG_INSERIR ."');
+                window.location.href = '../index.php';
+                </script>");
+            else
+                echo("<script> 
+                alert('". BD_MSG_ERRO ."');
+                window.history.back();
+                </script>");
 
+        } elseif(strtoupper($_GET['modo']) == "ATUALIZAR")
+        {
+           if (editar($cliente))
+                echo("<script> 
+                alert('". BD_MSG_INSERIR ."');
+                window.location.href = '../index.php';
+                </script>");
+           else
+                echo("<script> 
+                alert('". BD_MSG_ERRO ."');
+                window.history.back();
+                </script>");
+           
+        }  
     }
 }
 ?>
